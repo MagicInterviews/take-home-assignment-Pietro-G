@@ -1,0 +1,16 @@
+{
+  "name": "take-home-assignment",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "pnpm --filter @event-ease/app build",
+    "dev": "pnpm --filter @event-ease/app dev",
+    "lint": "pnpm --filter @event-ease/app lint",
+    "start": "pnpm --filter @event-ease/app start",
+    "db:start": "npx supabase start",
+    "db:stop": "npx supabase stop",
+    "db:migrate": "npx supabase db push --local --include-all",
+    "db:reset": "npx supabase db reset --local"
+  },
+  "packageManager": "pnpm@10.14.0"
+}
