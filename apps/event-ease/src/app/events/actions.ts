@@ -12,16 +12,14 @@ type GetEventsResponse = {
   registrations: Array<Registration>;
 };
 
-export async function getEvents(userId: string): Promise<GetEventsResponse> {
+type RegistrationFilter = "all" | "registered" | "not-registered";
+
+export async function getEvents(
+  userId: string,
+  searchQuery?: string,
+  registrationFilter?: RegistrationFilter
+): Promise<GetEventsResponse> {
   const client = await createClient();
-
-  const { data: events, error: eventsError } = await client
-    .from("events")
-    .select("*, organizers (name, contact_info)");
-
-  if (eventsError) {
-    throw new Error(eventsError.message);
-  }
 
   const { data: registrations, error: registrationError } = await client
     .from("registrations")
@@ -32,7 +30,44 @@ export async function getEvents(userId: string): Promise<GetEventsResponse> {
     throw new Error(registrationError.message);
   }
 
-  return { events: events || [], registrations: registrations || [] };
+  const registrationIds = new Set(
+    (registrations || [])
+      .map(r => r.event_id)
+      .filter((id): id is string => id !== null)
+  );
+
+  let eventsQuery = client
+    .from("events")
+    .select("*, organizers (name, contact_info)");
+
+  if (searchQuery && searchQuery.trim()) {
+    const searchTerm = searchQuery.trim();
+    eventsQuery = eventsQuery.or(
+      `name.ilike.%${searchTerm}%,location.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`
+    );
+  }
+
+  if (registrationFilter === "registered" && registrationIds.size > 0) {
+    eventsQuery = eventsQuery.in("id", Array.from(registrationIds));
+  } else if (registrationFilter === "not-registered") {
+    // For "not-registered", we need to filter out registered events
+  }
+
+  const { data: events, error: eventsError } = await eventsQuery;
+
+  if (eventsError) {
+    throw new Error(eventsError.message);
+  }
+
+  let filteredEvents = events || [];
+
+  if (registrationFilter === "not-registered") {
+    filteredEvents = filteredEvents.filter(event => 
+      !registrationIds.has(event.id)
+    );
+  }
+
+  return { events: filteredEvents, registrations: registrations || [] };
 }
 
 export async function register(userId: string, eventId: string) {

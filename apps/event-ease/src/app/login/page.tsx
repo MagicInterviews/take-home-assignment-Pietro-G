@@ -28,35 +28,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <Form.Root ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-sm sm:max-w-md space-y-18">
-        <Logo variant="large" />
-        <div className="text-center space-y-6 sm:space-y-6">
-          <div className="space-y-4">
+    <div className="min-h-dvh bg-white flex items-center justify-center p-2 sm:p-4 md:p-6 lg:p-8">
+      <Form.Root ref={formRef} onSubmit={handleFormSubmit} className="w-full max-w-sm sm:max-w-md space-y-6 sm:space-y-8 min-w-0">
+        <div className="flex justify-center">
+          <Logo variant="large" className="text-blue-600 [&_svg]:!text-blue-600 [&_span]:!text-blue-600" />
+        </div>
+        <div className="text-center space-y-4 sm:space-y-6">
+          <div className="space-y-4 w-full">
             <TextField
+              size="md"
               controlProps={{
                 placeholder: "Email",
                 required: true,
                 type: "email",
-                className: "h-11 sm:h-12 text-base",
+                className: "w-full sm:h-12",
               }}
               name="email"
             />
             <TextField
+              size="md"
               controlProps={{
                 placeholder: "Password",
                 required: true,
                 type: "password",
-                className: "h-11 sm:h-12 text-base",
+                className: "w-full sm:h-12",
               }}
               name="password"
             />
           </div>
 
-          <div className="space-y-4 pt-2">
+          <div className="space-y-4 pt-2 w-full">
             <Button
               variant="primary"
-              className="w-full h-11 sm:h-12 text-base font-medium"
+              size="md"
+              className="w-full sm:h-12 min-w-0 px-2 sm:px-4 whitespace-nowrap"
               disabled={loading !== null}
               type="submit"
             >
@@ -65,7 +70,8 @@ export default function LoginPage() {
             <Button
               onClick={handleSignup}
               variant="secondary"
-              className="w-full h-11 sm:h-12 text-base font-medium"
+              size="md"
+              className="w-full sm:h-12 min-w-0 px-2 sm:px-4 whitespace-nowrap"
               disabled={loading !== null}
               type="button"
             >
